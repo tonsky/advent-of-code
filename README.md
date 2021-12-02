@@ -3,7 +3,7 @@ Solutions to https://adventofcode.com/2021/
 Run:
 
 ```
-./script/run.sh
+./script/run_year2021.sh
 ```
 
 REPL:

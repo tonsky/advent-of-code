@@ -1,11 +1,11 @@
-(ns advent2021.day1
+(ns advent-of-code.year2021.day1
   (:require
    [clojure.java.io :as io]
    [clojure.string :as str]
    [clojure.set :as set]))
 
 (def data
-  (with-open [rdr (io/reader (io/file "inputs/day1"))]
+  (with-open [rdr (io/reader (io/file "inputs/year2021/day1"))]
     (->> (line-seq rdr)
       (mapv parse-long))))
 
