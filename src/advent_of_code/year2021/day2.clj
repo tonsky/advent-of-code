@@ -31,7 +31,7 @@
     (* x y)))
 
 (defn -main [& args]
-  (println "Day 1")
+  (println "Day 2")
   (println "├ part 1:" (part1))
   (println "└ part 2:" (part2)))
 
