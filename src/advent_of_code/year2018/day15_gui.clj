@@ -59,7 +59,7 @@
                           (.setColor paint (unchecked-int 0xFFCC3333))
                           (.drawRect canvas (Rect/makeXYWH (+ width 2) 0 (- sprite-size 4 width) 6) paint)
                           (.setColor paint (unchecked-int 0xFFFFFFFF))
-                          (.drawString canvas (str (:hp unit)) 0 20 font paint))))]
+                          #_(.drawString canvas (str (:hp unit)) 0 20 font paint))))]
     (.translate canvas
       (-> (.getWidth bounds) (- (* (:width game) sprite-size)) (quot 2))
       (-> (.getHeight bounds) (- (* (:height game) sprite-size)) (quot 2)))
@@ -115,6 +115,6 @@
 
   (swap! *game day15/make-turn)
   (reset! *game (day15/parse day15/example2))
-  (day15/part1 day15/problem {:delay 16 :on-turn #(reset! *game %)})
+  (day15/part1 day15/problem {:delay 100 :on-turn #(reset! *game %)})
 
   (day15/part2 day15/problem {:on-turn #(reset! *game %)}))
