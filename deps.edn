@@ -2,7 +2,13 @@
  {org.clojure/clojure {:mvn/version "1.11.0-alpha3"}
   nrepl/nrepl {:mvn/version "0.8.3"}}
  :aliases
- {:humbleui
+ {:profile
+  {:extra-deps
+   {com.clojure-goes-fast/clj-async-profiler {:mvn/version "0.5.1"}}
+   :jvm-opts ["-Djdk.attach.allowAttachSelf"
+              "-XX:+UnlockDiagnosticVMOptions"
+              "-XX:+DebugNonSafepoints"]}
+  :humbleui
   {:extra-deps
    {io.github.humbleui.jwm/jwm {:mvn/version "0.2.6"}
     io.github.humbleui.skija/skija-macos-arm64 {:mvn/version "0.96.0"}
