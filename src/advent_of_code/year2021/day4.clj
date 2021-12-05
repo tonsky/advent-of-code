@@ -63,11 +63,6 @@
             (score (last boards) nums)
             (recur (inc n) boards')))))))
 
-(defn -main [& args]
-  (println "Day 4")
-  (println "├ part 1:" (part1))
-  (println "└ part 2:" (part2)))
-
 (comment
   (part1 example)
   (part1)

@@ -30,11 +30,6 @@
                   [0 0 0] data)]
     (* x y)))
 
-(defn -main [& args]
-  (println "Day 2")
-  (println "├ part 1:" (part1))
-  (println "└ part 2:" (part2)))
-
 (comment
   (part1)
   (part2))

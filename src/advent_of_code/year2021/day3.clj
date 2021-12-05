@@ -61,11 +61,6 @@
           CO₂   (rating lines \0 \1)]
      (* O₂ CO₂))))
 
-(defn -main [& args]
-  (println "Day 3")
-  (println "├ part 1:" (part1))
-  (println "└ part 2:" (part2)))
-
 (comment
   (part1 example)
   (part1)

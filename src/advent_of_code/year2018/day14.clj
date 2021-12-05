@@ -41,11 +41,6 @@
                elf2' (mod (+ elf2 1 (data elf2)) (count data'))]
            (recur data' elf1' elf2' last)))))))
 
-(defn -main [& args]
-  (println "Day 14")
-  (println "├ part 1:" (part1))
-  (println "└ part 2:" (part2)))
-
 (comment
   (part1 9)
   (part1 5)

@@ -64,11 +64,6 @@
   ([input]
     (solve (parse input))))
 
-(defn -main [& args]
-  (println "Day 5")
-  (println "├ part 1:" (part1))
-  (println "└ part 2:" (part2)))
-
 (comment
   (do
     (set! *warn-on-reflection* true)

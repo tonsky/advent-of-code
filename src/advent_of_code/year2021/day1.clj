@@ -20,11 +20,6 @@
       (filter neg?)
       (count))))
 
-(defn -main [& args]
-  (println "Day 1")
-  (println "├ part 1:" (part1))
-  (println "└ part 2:" (part2)))
-
 (comment
   (part1)
   (part2))

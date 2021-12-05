@@ -244,44 +244,42 @@
     (reduce-kv make-turn-unit game (:units game))
     :turn inc))
 
+(defn solve [input {:keys [delay on-turn]
+                    :or {on-turn identity}
+                    :as opts}]
+ (let [game  (parse input opts)
+       elves (count (filter #(= :elf (:who %)) (vals (:units game))))]
+   (on-turn game)
+   (loop [game game]
+     (let [game' (make-turn game)]
+       (on-turn game)
+       (if (:over? game)
+         (let [turn (dec (:turn game))
+               hp   (reduce-kv (fn [acc _ unit] (+ acc (:hp unit))) 0 (:units game))]
+           {:answer (* turn hp)
+            :hp     hp
+            :turn   turn
+            :deaths (- elves (count (filter #(= :elf (:who %)) (vals (:units game)))))})
+         (do
+           (when delay
+             (Thread/sleep delay))
+           (recur game')))))))
+
 (defn part1
   ([] (part1 problem {}))
   ([input] (part1 input {}))
-  ([input {:keys [delay on-turn]
-           :or {on-turn identity}
-           :as opts}]
-   (let [game  (parse input opts)
-         elves (count (filter #(= :elf (:who %)) (vals (:units game))))]
-     (on-turn game)
-     (loop [game game]
-       (let [game' (make-turn game)]
-         (on-turn game)
-         (if (:over? game)
-           (let [turn (dec (:turn game))
-                 hp   (reduce-kv (fn [acc _ unit] (+ acc (:hp unit))) 0 (:units game))]
-             {:answer (* turn hp)
-              :hp     hp
-              :turn   turn
-              :deaths (- elves (count (filter #(= :elf (:who %)) (vals (:units game)))))})
-           (do
-             (when delay
-               (Thread/sleep delay))
-             (recur game'))))))))
+  ([input opts]
+    (:answer (solve input opts))))
 
 (defn part2
   ([] (part2 problem {}))
   ([input] (part2 input {}))
   ([input {:keys [delay] :as opts}]
     (loop [attack 4]
-      (let [{:keys [deaths] :as result} (part1 input (assoc opts :elf-attack attack))]
+      (let [{:keys [deaths] :as result} (solve input (assoc opts :elf-attack attack))]
         (if (= 0 deaths)
-          (assoc result :attack attack)
+          (:answer result)
           (recur (inc attack)))))))
-
-(defn -main [& args]
-  (println "Day 15")
-  (println "├ part 1:" (:answer (part1)))
-  (println "└ part 2:" (:answer (part2))))
 
 (comment
   (= 27730 (:answer (part1 example1)))
