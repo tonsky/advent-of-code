@@ -13,7 +13,7 @@
     (println)))
 
 (defn -main [& args]
-  (doseq [day (range 1 (inc 7))]
+  (doseq [day (range 1 (inc 8))]
     (solve-day day)))
 
 (comment
