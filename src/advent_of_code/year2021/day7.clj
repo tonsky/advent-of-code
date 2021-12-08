@@ -15,34 +15,39 @@
     (str/split #",")
     (->> (mapv parse-long))))
 
+(defn abs ^long [^long x]
+  (if (< x 0)
+    (- x)
+    x))
+
 (defn part1
   ([] (part1 input))
   ([input]
    (let [xs (parse input)]
      (->>
        (for [res (range (reduce min xs) (inc (reduce max xs)))]
-         (reduce (fn [acc x] (+ acc (math/abs (- x res)))) 0 xs))
+         (reduce (fn [acc x] (+ acc (abs (- x res)))) 0 xs))
        (reduce min)))))
 
 (defn cost2 [from to]
-  (let [dist (long (math/abs (- from to)))]
-    (long (* dist (+ dist 1) 1/2))))
+  (let [dist (abs (- from to))]
+    (quot (* dist (+ dist 1)) 2)))
 
 (defn part2
   ([] (part2 input))
   ([input]
-    (let [xs (parse input)]
-     (->>
-       (for [res (range (reduce min xs) (inc (reduce max xs)))]
-         (reduce (fn [acc x] (+ acc (cost2 x res))) 0 xs))
-       (reduce min)))))
+   (let [xs (parse input)]
+    (->>
+      (for [res (range (reduce min xs) (inc (reduce max xs)))]
+        (reduce (fn [acc x] (+ acc (cost2 x res))) 0 xs))
+      (reduce min)))))
 
 (comment
   (do
     (set! *warn-on-reflection* true)
     (require 'advent-of-code.year2021.day7 :reload))
   (part1 example)
-  (part1)
+  (time (part1))
   (profiler/profile (part1))
   (part2 example)
-  (part2))
+  (time (part2)))

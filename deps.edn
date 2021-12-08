@@ -11,5 +11,8 @@
   :humbleui
   {:extra-deps
    {io.github.humbleui.jwm/jwm {:mvn/version "0.2.6"}
+    io.github.humbleui.skija/skija-windows     {:mvn/version "0.96.0"}
+    io.github.humbleui.skija/skija-linux       {:mvn/version "0.96.0"}
+    io.github.humbleui.skija/skija-macos-x64   {:mvn/version "0.96.0"}
     io.github.humbleui.skija/skija-macos-arm64 {:mvn/version "0.96.0"}
     io.github.humbleui/humbleui {:git/sha "b5bca9f9923196adebcca9be1ca43965ca7b461d"}}}}}
