@@ -1,6 +1,7 @@
 (ns advent-of-code.year2021.day15
   (:require
    [advent-of-code.core :refer [cond+]]
+   [clojure.data.priority-map :refer [priority-map]]
    [clojure.java.io :as io]
    [clojure.java.math :as math]
    [clojure.string :as str]
@@ -32,18 +33,23 @@
   (let [costs ^longs (into-array Long/TYPE (repeat (* width height) Long/MAX_VALUE))
         idx   (fn [[x y]] (+ x (* y width)))]
     (aset costs (idx [0 0]) 0)
-    (loop [queue (conj (clojure.lang.PersistentQueue/EMPTY) [0 0])]
+    (loop [queue (assoc (priority-map) [0 0] 0)]
       (if (empty? queue)
         (aget costs (idx [(dec width) (dec height)]))
-        (let [pos     (peek queue)
-              cost    (aget costs (idx pos))
-              updated (for [pos'  (neighbours width height pos)
-                            :let  [idx'  (idx pos')
-                                   cost' (+ cost (aget values idx'))]
-                            :when (< cost' (aget costs idx'))
-                            :let  [_ (aset costs idx' cost')]]
-                        pos')]
-          (recur (into (pop queue) updated)))))))
+        (let [[pos cost] (first queue)
+              cost (long cost)]
+          (cond
+            (= pos [(dec width) (dec height)])
+            cost
+
+            :else
+            (let [updated (for [pos'  (neighbours width height pos)
+                                :let  [idx'  (idx pos')
+                                       cost' (+ cost (aget values idx'))]
+                                :when (< cost' (aget costs idx'))
+                                :let  [_ (aset costs idx' cost')]]
+                            [pos' cost'])]
+              (recur (into (dissoc queue pos) updated)))))))))
 
 (defn part1
   ([] (part1 input))
