@@ -15,7 +15,7 @@
 
 (def input {:left 153 :right 199 :top -75 :bottom -114})
 
-(defn dec-abs [x]
+(defn dec-abs ^long [^long x]
   (cond
     (pos? x)  (dec x)
     (neg? x)  (inc x)
@@ -24,8 +24,8 @@
 (defn shoot [{:keys [left right top bottom]} vx vy]
   (loop [x 0
          y 0
-         vx vx
-         vy vy
+         vx (long vx)
+         vy (long vy)
          maxy 0]
     (cond
       (and (< x left) (= 0 vx)) :overshoot
@@ -64,7 +64,7 @@
 (comment
   (do
     (set! *warn-on-reflection* true)
-    (require 'advent-of-code.year2021.day16 :reload))
+    (require 'advent-of-code.year2021.day17 :reload))
   (shoot example 7 2)
   (shoot example 6 3)
   (shoot example 9 0)
