@@ -1,5 +1,10 @@
 (ns advent-of-code.core)
 
+(defn abs ^long [^long x]
+  (if (< x 0)
+    (- x)
+    x))
+
 (defmacro cond+ [& clauses]
   (when-some [[test expr & rest] clauses]
     (case test
