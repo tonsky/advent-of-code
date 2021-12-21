@@ -12,3 +12,6 @@
       :let  `(let ~expr (cond+ ~@rest))
       :some `(or ~expr (cond+ ~@rest))
             `(if ~test ~expr (cond+ ~@rest)))))
+
+(defmacro forv [& forms]
+  `(vec (for ~@forms)))
