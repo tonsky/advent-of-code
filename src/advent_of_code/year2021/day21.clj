@@ -66,9 +66,10 @@
 (defn ** ^LongPair [^long n ^LongPair p]
   (LongPair. (* n (.-a p)) (* n (.-b p))))
 
+(declare play-p1)
 (declare play-p2)
 
-(defn play-p1 [^long p1 ^long p2 ^long s1 ^long s2]
+(defn play-p1-raw [^long p1 ^long p2 ^long s1 ^long s2]
   (if (>= s2 21)
     (LongPair. 0 1)
     (+*
@@ -80,7 +81,7 @@
       (let [p' (add p1 8 10)] (** 3 (play-p2 p' p2 (+ s1 p') s2)))
       (let [p' (add p1 9 10)] (** 1 (play-p2 p' p2 (+ s1 p') s2))))))
 
-(defn play-p2 [^long p1 ^long p2 ^long s1 ^long s2]
+(defn play-p2-raw [^long p1 ^long p2 ^long s1 ^long s2]
   (if (>= s1 21)
     (LongPair. 1 0)
     (+*
@@ -91,6 +92,9 @@
       (let [p' (add p2 7 10)] (** 6 (play-p1 p1 p' s1 (+ s2 p'))))
       (let [p' (add p2 8 10)] (** 3 (play-p1 p1 p' s1 (+ s2 p'))))
       (let [p' (add p2 9 10)] (** 1 (play-p1 p1 p' s1 (+ s2 p')))))))
+
+(def play-p1 (memoize play-p1-raw))
+(def play-p2 (memoize play-p2-raw))
 
 (defn part2
   ([] (part2 input))
@@ -104,7 +108,7 @@
     (require 'advent-of-code.year2021.day21 :reload))
   (part1 example)
   (part1 input)
-  (part2 example)
-  (part2 input)
+  (time (part2 example))                ; 0.041364 msecs
+  (time (part2 input))                  ; 0.043284 msecs
   (require '[clj-async-profiler.core :as profiler])
   (profiler/profile (part2 input)))
