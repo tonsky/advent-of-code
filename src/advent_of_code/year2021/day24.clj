@@ -1,4 +1,5 @@
 (ns advent-of-code.year2021.day24
+  (:refer-clojure :exclude [mod])
   (:require
    [advent-of-code.core :refer [cond+]]
    [clojure.data.priority-map :refer [priority-map]]

@@ -1,4 +1,4 @@
-(ns advent-of-code.year2018.gui
+(ns advent-of-code.gui
   (:require
    [io.github.humbleui.core :as hui]
    [nrepl.cmdline :as nrepl]))
