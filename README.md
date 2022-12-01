@@ -1,10 +1,4 @@
-Solutions to https://adventofcode.com/2021/
-
-Run:
-
-```
-./script/run_year2021.sh
-```
+Solutions to https://adventofcode.com/2022/
 
 REPL:
 
