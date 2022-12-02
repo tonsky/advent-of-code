@@ -2,7 +2,7 @@
   (:require
    [advent-of-code.core :refer [cond+]]
    [clojure.java.io :as io]
-   [clojure.java.math :as math]
+   [clojure.math :as math]
    [clojure.math.combinatorics :as comb]
    [clojure.string :as str]
    [clojure.set :as set]))
@@ -64,8 +64,9 @@
 (defn parse [input]
   (vec
     (for [line (str/split-lines input)
-          :let [[_ op a b c] (re-matches #"([a-z]{4}) (\d+) (\d+) (\d+)" line)]]
-      [(resolve (symbol "advent-of-code.year2018.day19" op))
+          :let [[_ op a b c] (re-matches #"([a-z]{4}) (\d+|_) (\d+|_) (\d+|_)\s*(#.*)?" line)]
+          :when op]
+      [(ns-resolve (the-ns 'advent-of-code.year2018.day19) (symbol op))
        (parse-long a)
        (parse-long b)
        (parse-long c)])))

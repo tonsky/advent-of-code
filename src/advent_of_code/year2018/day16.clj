@@ -1,16 +1,16 @@
 (ns advent-of-code.year2018.day16
   (:require
-   [clojure.string :as str]))
+    [clojure.string :as str]))
 
 (defn parse-example [example]
   (let [[b0 b1 b2 b3 op a b c a0 a1 a2 a3]
         (->> example
-            (re-find #"Before: \[(\d+), (\d+), (\d+), (\d+)\]\n(\d+) (\d+) (\d+) (\d+)\nAfter:\s*\[(\d+), (\d+), (\d+), (\d+)\]")
-            (next)
-            (mapv parse-long))]
-    {:before [b0 b1 b2 b3]
+          (re-find #"Before: \[(\d+), (\d+), (\d+), (\d+)\]\n(\d+) (\d+) (\d+) (\d+)\nAfter:\s*\[(\d+), (\d+), (\d+), (\d+)\]")
+          (next)
+          (mapv parse-long))]
+    {:before  [b0 b1 b2 b3]
      :command [op a b c]
-     :after [a0 a1 a2 a3]}))
+     :after   [a0 a1 a2 a3]}))
 
 (def input1
   (-> (slurp "inputs/year2018/day16.part1")
