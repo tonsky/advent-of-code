@@ -1,11 +1,13 @@
 (ns advent-of-code.year2022.day22
   (:require
     [advent-of-code.v2 :as v2 :refer [v2]]
+    [advent-of-code.priority-queue :as priority-queue]
     [advent-of-code.map :as map]
     [clojure.java.io :as io]
     [clojure.math :as math]
     [clojure.string :as str]
     [clojure.set :as set]
+    [clojure.data.priority-map :as priority-map]
     [remote-require.core :as rr]
     [advent-of-code.year2022.gui :as gui]
     [io.github.humbleui.canvas :as canvas]
@@ -71,14 +73,12 @@
    :none  (-> (map/make (v2 (:w terrain) (:h terrain)))
             (map/fill 10000))})
 
-(defn cmp [[a ea] [b eb]]
-  (compare
-    [(+ (v2/dist a (:target data)) (if (= ea :torch) 0 0)) (:x a) (:y a) ea]
-    [(+ (v2/dist b (:target data)) (if (= eb :torch) 0 0)) (:x b) (:y b) eb]))
+(defn cost-fn [[pos equip]]
+  (+ (v2/dist pos (:target data)) (if (= equip :torch) 0 0)))
 
 (def *queue
   (atom
-    (sorted-set-by cmp
+    (priority-queue/priority-queue-by cost-fn
       [(v2 0 0) :torch])))
 
 (defn allowed? [pos equip]
@@ -89,7 +89,7 @@
       (and (= 2 t) (or (= :torch equip) (= :none equip)))))) ; narrow
 
 (defn step [queue]
-  (when-some [[pos equip] (first queue)]
+  (when-some [[pos equip] (priority-queue/peek queue)]
     (reduce
       (fn [queue [pos' equip' cost]]
         (cond+
@@ -116,8 +116,8 @@
           :else
           (do
             (map/set! (scores equip') pos' score')
-            (conj queue [pos' equip']))))
-      (disj queue (first queue))
+            (priority-queue/conj queue [pos' equip']))))
+      (priority-queue/pop queue)
       [[(v2/left pos)   equip 1]
        [(v2/right pos)  equip 1]
        [(v2/up pos)     equip 1]
@@ -179,39 +179,25 @@
           (core/rect-xywh (* scale cx) (* scale cy) scale scale)
           fill-target))
 
-      (let [visited (+ (if (< (map/get (:torch scores) pos) 10000) 1 0)
+      (let [visited (+
+                      (if (< (map/get (:torch scores) pos) 10000) 1 0)
                       (if (< (map/get (:gear scores) pos) 10000) 1 0)
                       (if (< (map/get (:none scores) pos) 10000) 1 0))]
         (when (> visited 0)
-          (canvas/draw-rect canvas rect (nth fill-visited visited))))
-      
-      ; (when (< (map/get (:torch scores) (v2 x y)) 10000)
-      ;   (canvas/draw-string canvas (map/get (:torch scores) (v2 x y)) (* scale cx) (+ (* scale cy) 25) (:font-ui ctx) (:fill-text ctx)))
-      
-      ; (when (< (map/get (:gear scores) (v2 x y)) 10000)
-      ;   (canvas/draw-string canvas (map/get (:gear scores) (v2 x y)) (* scale cx) (+ (* scale cy) 50) (:font-ui ctx) (:fill-text ctx)))
-      
-      ; (when (< (map/get (:none scores) (v2 x y)) 10000)
-      ;   (canvas/draw-string canvas (map/get (:none scores) (v2 x y)) (* scale cx) (+ (* scale cy) 75) (:font-ui ctx) (:fill-text ctx)))
-      )
-    
-    (doseq [[pos _] @*queue
+          (canvas/draw-rect canvas rect (nth fill-visited visited)))))
+
+    (doseq [[pos _] (priority-queue/seq @*queue)
             :let [{cx :x cy :y} (conv pos)]]
       (canvas/draw-rect
         canvas
         (core/rect-xywh (* scale cx) (* scale cy) scale scale)
         fill-queue))
-    
-    
+
     (canvas/draw-string canvas 
       (str "Score: " (map/get (:torch scores) (:target data)))
       (- width 200) (- height 40) (:font-ui ctx) (:fill-text ctx))
 
-    (gui/redraw)
-    
-    #_(when-not (empty? @*queue)
-      (swap! *queue step)
-      (gui/redraw))))
+    (gui/redraw)))
 
 (reset! gui/*app
   (ui/default-theme
@@ -221,7 +207,9 @@
 (gui/redraw)
 
 (comment
-  (reset! *queue [[(v2 0 0) :torch]])
+  (reset! *queue
+    (priority-queue/priority-queue-by cost-fn
+      [(v2 0 0) :torch])) 
   (while (not (empty? @*queue))
     (swap! *queue step))
   (swap! *queue step)
