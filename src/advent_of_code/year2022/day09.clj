@@ -124,7 +124,7 @@ U 20")
 
 (defn on-paint [ctx canvas size]
   (let [{:keys [width height]} size
-        scale 4
+        scale 2
         {:keys [rope visited]} @*state]
     
     (doseq [[x y] visited]
