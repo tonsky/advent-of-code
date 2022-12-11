@@ -8,7 +8,9 @@
   io.github.tonsky/remote-require          {:git/sha "c9027682287f48cd89450839b18e6c69758fc343"}
   io.github.nextjournal/clerk              {:mvn/version "0.12.707"}}
  
- :jvm-opts
- ["-Djdk.attach.allowAttachSelf"
-  "-XX:+UnlockDiagnosticVMOptions"
-  "-XX:+DebugNonSafepoints"]}
+ :aliases
+ {:profile
+  {:jvm-opts
+   ["-Djdk.attach.allowAttachSelf"
+    "-XX:+UnlockDiagnosticVMOptions"
+    "-XX:+DebugNonSafepoints"]}}}
