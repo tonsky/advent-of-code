@@ -21,6 +21,10 @@
 (defn parse [data]
   data)
 
+(comment
+  (parse sample1)
+  (parse data))
+
 (defn part1 [data]
   (let [data (parse data)]
     ))
@@ -39,19 +43,3 @@
 (comment
   (part2 sample1)
   (part2 data))
-
-(comment
-  (rr/from "https://github.com/weavejester/medley/master/src/medley/core.cljc"
-    :require [assoc-some])
-  
-  (require
-    '[advent-of-code.year2022.gui :as gui]
-    '[io.github.humbleui.ui :as ui])
-
-  (reset! gui/*app
-    (ui/default-theme
-      (ui/focus-controller
-        (ui/center
-          (ui/label "Day XX")))))
-
-  (gui/redraw))

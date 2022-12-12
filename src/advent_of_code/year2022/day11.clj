@@ -5,93 +5,94 @@
     [clojure.string :as str]
     [clojure.set :as set]
     [clj-async-profiler.core :as profiler]
-    [remote-require.core :as rr]))
+    [remote-require.core :as rr]
+    [instaparse.core :as insta]))
+
+(def parser
+  (insta/parser
+    "Monkeys = Monkey+
+     Monkey  = <'Monkey '> id <':'> <newline> Items <newline> Op <newline> Test <newline> Cond <newline> Cond <newline*>
+     id      = number
+     Items   = <'Starting items: '> number (<', '> number)*
+     Op      = <'Operation: new = old '> ('+' | '*') <' '> ('old' | number)
+     Test    = <'Test: divisible by '> number
+     Cond    = <'If '> ('true' | 'false') <': throw to monkey '> number
+     newline = '\n' ' '*
+     number  = #'[0-9]+'"))
+
+(def transform
+  {:number parse-long
+   :Items  (fn [& items]
+             [:items (vec items)])
+   :Op     (fn [operand value]
+             [:op
+              (fn [x]
+                ((case operand "+" + "*" *) x (case value "old" x value)))])
+   :Test   (fn [n]
+             [:test #(= 0 (mod % n))])
+   :Cond   (fn [val id]
+             (case val
+               "true"  [:pass id]
+               "false" [:fail id]))
+   :Monkey (fn [& entries]
+             (into {:inspects 0} entries))
+   :Monkeys vector})
+
+(comment
+  (insta/transform transform
+    (parser
+      "Monkey 0:
+       Starting items: 89, 73
+       Operation: new = old * 3
+       Test: divisible by 13
+       If true: throw to monkey 6
+       If false: throw to monkey 2"))
+  (insta/transform transform
+    (parser (slurp (io/file "inputs/year2022/day11")))))
 
 (def sample1
-  [{:items    [79 98]
-    :op       #(* 19 %)
-    :test     #(= 0 (mod % 23))
-    :pass     2
-    :fail     3
-    :inspects 0}
-   {:items    [54, 65, 75, 74]
-    :op       #(+ 6 %)
-    :test     #(= 0 (mod % 19))
-    :pass     2
-    :fail     0
-    :inspects 0}
-   {:items    [79, 60, 97]
-    :op       #(* % %)
-    :test     #(= 0 (mod % 13))
-    :pass     1
-    :fail     3
-    :inspects 0}
-   {:items    [74]
-    :op       #(+ 3 %)
-    :test     #(= 0 (mod % 17))
-    :pass     0
-    :fail     1
-    :inspects 0}])
+  "Monkey 0:
+  Starting items: 79, 98
+  Operation: new = old * 19
+  Test: divisible by 23
+    If true: throw to monkey 2
+    If false: throw to monkey 3
+
+Monkey 1:
+  Starting items: 54, 65, 75, 74
+  Operation: new = old + 6
+  Test: divisible by 19
+    If true: throw to monkey 2
+    If false: throw to monkey 0
+
+Monkey 2:
+  Starting items: 79, 60, 97
+  Operation: new = old * old
+  Test: divisible by 13
+    If true: throw to monkey 1
+    If false: throw to monkey 3
+
+Monkey 3:
+  Starting items: 74
+  Operation: new = old + 3
+  Test: divisible by 17
+    If true: throw to monkey 0
+    If false: throw to monkey 1")
 
 (def data
-  [{:items    [89, 73, 66, 57, 64, 80]
-    :op       #(* 3 %)
-    :test     #(= 0 (mod % 13))
-    :pass     6
-    :fail     2
-    :inspects 0}
-   {:items    [83, 78, 81, 55, 81, 59, 69]
-    :op       #(+ 1 %)
-    :test     #(= 0 (mod % 3))
-    :pass     7
-    :fail     4
-    :inspects 0}
-   {:items    [76, 91, 58, 85]
-    :op       #(* 13 %)
-    :test     #(= 0 (mod % 7))
-    :pass     1
-    :fail     4
-    :inspects 0}
-   {:items    [71, 72, 74, 76, 68]
-    :op       #(* % %)
-    :test     #(= 0 (mod % 2))
-    :pass     6
-    :fail     0
-    :inspects 0}
-   {:items    [98, 85, 84]
-    :op       #(+ 7 %)
-    :test     #(= 0 (mod % 19))
-    :pass     5
-    :fail     7
-    :inspects 0}
-   {:items    [78]
-    :op       #(+ 8 %)
-    :test     #(= 0 (mod % 5))
-    :pass     3
-    :fail     0
-    :inspects 0}
-   {:items    [86, 70, 60, 88, 88, 78, 74, 83]
-    :op       #(+ 4 %)
-    :test     #(= 0 (mod % 11))
-    :pass     1
-    :fail     2
-    :inspects 0}
-   {:items    [81, 58]
-    :op       #(+ 5 %)
-    :test     #(= 0 (mod % 17))
-    :pass     3
-    :fail     5
-    :inspects 0}])
+  (slurp (io/file "inputs/year2022/day11")))
+
+(defn parse [s]
+  (->> s
+    parser
+    (insta/transform transform)))
 
 (def ^:dynamic *reduce-stress*
   identity)
 
 (defn round
   ([state]
-   (reduce
-     round
-     state
-     (range (count state))))
+   (reduce round state (range (count state))))
   ([state idx]
    (let [{:keys [items op test pass fail]} (nth state idx)]
      (reduce
@@ -110,7 +111,7 @@
 (defn part1 [data]
   (binding [*reduce-stress* #(quot % 3)]
     (->>
-      (nth (iterate round data) 20)
+      (nth (iterate round (parse data)) 20)
       (map :inspects)
       (sort-by -)
       (take 2)
@@ -124,7 +125,7 @@
 (defn part2 [data]
   (binding [*reduce-stress* #(mod % (* 2 3 5 7 11 13 17 19 23))]
     (->>
-      (nth (iterate round data) 10000)
+      (nth (iterate round (parse data)) 10000)
       (map :inspects)
       (sort-by -)
       (take 2)
