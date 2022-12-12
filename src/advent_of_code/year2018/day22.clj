@@ -74,7 +74,10 @@
             (map/fill 10000))})
 
 (defn cost-fn [[pos equip]]
-  (+ (v2/dist pos (:target data)) (if (= equip :torch) 0 0)))
+  (+
+    (map/get (scores equip) pos)
+    (v2/dist pos (:target data))
+    (if (= equip :torch) 0 7)))
 
 (def *queue
   (atom
@@ -197,7 +200,12 @@
       (str "Score: " (map/get (:torch scores) (:target data)))
       (- width 200) (- height 40) (:font-ui ctx) (:fill-text ctx))
 
-    (gui/redraw)))
+    #_(gui/redraw)
+    
+    (when (not (empty? @*queue))
+      (dotimes [i 100]
+        (swap! *queue step))
+      (gui/redraw))))
 
 (reset! gui/*app
   (ui/default-theme
