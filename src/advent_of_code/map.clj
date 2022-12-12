@@ -1,16 +1,15 @@
 (ns advent-of-code.map
   [:refer-clojure :exclude [get contains?]])
 
-(defrecord Map [^longs arr w h])
+(defrecord Map [arr w h])
 
 (defn make [size]
   (let [{w :x, h :y} size]
-    (Map. (make-array Long/TYPE (* w h)) w h)))
+    (Map. (make-array Object (* w h)) w h)))
 
 (defn fill [m v]
-  (let [arr ^longs (:arr m)
-        len (alength arr)
-        v   (long v)]
+  (let [^objects arr (:arr m)
+        len (count arr)]
     (doseq [i (range 0 len)]
       (aset arr i v))
     m))
@@ -18,11 +17,11 @@
 (defn idx ^long [m p]
   (+ (:x p) (* (:y p) (:w m))))
 
-(defn get ^long [m p]
-  (aget ^longs (:arr m) (idx m p)))
+(defn get [m p]
+  (aget ^objects (:arr m) (idx m p)))
 
-(defn set! [m p ^long val]
-  (aset ^longs (:arr m) (idx m p) val)
+(defn set! [m p val]
+  (aset ^objects (:arr m) (idx m p) val)
   m)
 
 (defn contains? [m p]
