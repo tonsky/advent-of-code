@@ -76,8 +76,9 @@ abdefghi")
     (map/make (v2 (:w terrain) (:h terrain))))
 
   (defn cost-fn [p]
-    (+ (v2/dist p end)
-      (- (map/get terrain end) (map/get terrain p))))
+    (+
+      (map/get costs p)
+      (v2/dist p end)))
   
   (def *queue
     (atom 
