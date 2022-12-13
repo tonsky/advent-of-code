@@ -2,10 +2,35 @@
   (:require
     [clojure.math :as math]))
 
-(defrecord V2 [x y])
+(defrecord V2 [x y]
+  java.lang.Object
+  (toString [_]
+    (str "(" x "," y ")"))
 
-(defn v2 [x y]
-  (V2. x y))
+  clojure.lang.Indexed
+  (nth [this i]
+    (nth this i nil))
+  (nth [_ i not-found]
+    (case i 0 x 1 y not-found))
+  
+  java.lang.Comparable
+  (compareTo [a b]
+    (cond
+      (identical? a b)  0
+      (< (:x a) (:x b)) -1
+      (> (:x a) (:x b)) 1
+      (< (:y a) (:y b)) -1
+      (> (:y a) (:y b)) 1
+      :else             0)))
+
+(def v2 ->V2)
+
+(defmethod print-method V2 [c ^java.io.Writer w]
+  (.write w "(")
+  (.write w (str (:x c)))
+  (.write w ",")
+  (.write w (str (:y c)))
+  (.write w ")"))
 
 (def zero
   (v2 0 0))
