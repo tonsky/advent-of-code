@@ -1,11 +1,11 @@
-(ns advent-of-code.map
+(ns advent-of-code.grid
   [:refer-clojure :exclude [get contains?]])
 
-(defrecord Map [arr w h])
+(defrecord Grid [arr w h])
 
 (defn make [size]
   (let [{w :x, h :y} size]
-    (Map. (make-array Object (* w h)) w h)))
+    (Grid. (make-array Object (* w h)) w h)))
 
 (defn fill [m v]
   (let [^objects arr (:arr m)
