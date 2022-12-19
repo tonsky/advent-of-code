@@ -111,7 +111,6 @@ Valve JJ has flow rate=21; tunnel leads to valve II
   (+ released
     (* (- days time) (reduce + 0 (map rates open)))
     (reduce + 0 (map #(* (rates %1) %2)
-                  #_(sort-by #(- (rates %)) closed)
                   closed
                   (range (- days time) -1 -1)))))  
 
