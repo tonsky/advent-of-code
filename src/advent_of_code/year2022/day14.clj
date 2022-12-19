@@ -153,10 +153,13 @@
   (result))
 
 (defn part2 []
-  (parse data 500 180)
+  (parse data 500 179)
   (doseq [x (range 0 (:w grid))]
     (grid/set! grid (v2 x 178) :rock))
-  ; (Thread/sleep 1000)
+  (doseq [y (range 0 178)]
+    (grid/set! grid (v2 0 y) :rock)
+    (grid/set! grid (v2 499 y) :rock))
+  (Thread/sleep 1000)
   (while (some? (swap! *sand step))
     (Thread/sleep 0))
   (result))
