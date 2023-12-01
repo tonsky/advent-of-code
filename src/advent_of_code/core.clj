@@ -32,3 +32,17 @@
        (if (map? res#)
          (assoc res# :time-ms dt#)
          {:time-ms dt#, :res res#}))))
+
+(defn zip [& xs]
+  (apply map vector xs))
+
+(defn now []
+  (System/currentTimeMillis))
+
+(defn clamp [x from to]
+  (min (max x from) to))
+
+(defn between? [x from to]
+  (and
+    (<= from x)
+    (< x to)))

@@ -1,4 +1,4 @@
 #!/bin/bash -euo pipefail
 cd "`dirname $0`/.."
 
-clj -A:profile -M -m nrepl.cmdline --interactive
+clj -A:profile -M -m user
